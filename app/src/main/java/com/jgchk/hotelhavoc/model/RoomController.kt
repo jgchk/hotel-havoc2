@@ -39,6 +39,7 @@ class RoomController
 
         override fun onP2PConnected(participantId: String) {
             Log.d(TAG, "Participant $participantId connected")
+            start()
         }
 
         override fun onDisconnectedFromRoom(room: Room?) {
@@ -96,6 +97,10 @@ class RoomController
 
     private fun connectedPlayers(): List<Participant> {
         return room?.participants?.filter { it.isConnectedToRoom } ?: listOf()
+    }
+
+    private fun participants(): List<Participant> {
+        return room!!.participants
     }
 
     fun join() {
@@ -184,7 +189,7 @@ class RoomController
     }
 
     fun determineHost() {
-        val participantIds = connectedPlayers().map { it.participantId }
+        val participantIds = participants().map { it.participantId }
         val hostChooserId = participantIds.sorted().first()
         if (participantId == hostChooserId) {
             hostId = participantIds.random()

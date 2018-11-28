@@ -42,6 +42,7 @@ class ActionController
 
     override fun onComplete() {
         action = null
+        progress = 0
         onCompleteListener?.onComplete()
     }
 

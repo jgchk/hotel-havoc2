@@ -26,7 +26,6 @@ class OrderController
 
     init {
         orders = emptyList()
-        initOrders()
     }
 
     fun initOrders(): List<Order> {

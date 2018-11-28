@@ -193,6 +193,7 @@ class GameFragment : BaseFragment() {
     }
 
     private fun sendMessage(message: ByteArray, room: Room, participantId: String) {
+        Log.d(TAG, "Send to $participantId")
         multiplayerClient.sendReliableMessage(
             message,
             room.roomId,
