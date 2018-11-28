@@ -5,6 +5,7 @@ import kotlin.random.Random
 
 abstract class Order {
 
+    abstract val name: String
     abstract val requiredIngredients: List<Ingredient>
     abstract val score: Int
     val turnInRoom = Random.nextInt(1, 6)

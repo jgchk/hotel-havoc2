@@ -9,6 +9,10 @@ import com.jgchk.hotelhavoc.core.gson.RuntimeTypeAdapterFactory
 import com.jgchk.hotelhavoc.model.ActionController
 import com.jgchk.hotelhavoc.model.actions.OnCompleteListener
 import com.jgchk.hotelhavoc.model.ingredients.Ingredient
+import com.jgchk.hotelhavoc.model.orders.Fries
+import com.jgchk.hotelhavoc.model.orders.Hamburger
+import com.jgchk.hotelhavoc.model.orders.Milkshake
+import com.jgchk.hotelhavoc.model.orders.Order
 import com.jgchk.hotelhavoc.network.SensorsRepository
 import dagger.Module
 import dagger.Provides
@@ -28,11 +32,19 @@ class ApplicationModule(private val application: AndroidApplication) {
     @Provides
     @Singleton
     fun provideGson(): Gson {
-        val typeFactory = RuntimeTypeAdapterFactory
-            .of(Ingredient::class.java, "name")
-        Ingredient.ingredientMap.forEach { typeFactory.registerSubtype(it.value, it.key) }
+        val ingredientTypeFactory = RuntimeTypeAdapterFactory
+            .of(Ingredient::class.java, "type")
+        Ingredient.ingredientMap.forEach { ingredientTypeFactory.registerSubtype(it.value, it.key) }
+
+        val orderTypeFactory = RuntimeTypeAdapterFactory
+            .of(Order::class.java, "type")
+            .registerSubtype(Hamburger::class.java, "hamburger")
+            .registerSubtype(Fries::class.java, "fries")
+            .registerSubtype(Milkshake::class.java, "milkshake")
+
         return GsonBuilder()
-            .registerTypeAdapterFactory(typeFactory)
+            .registerTypeAdapterFactory(ingredientTypeFactory)
+            .registerTypeAdapterFactory(orderTypeFactory)
             .create()
     }
 

@@ -10,7 +10,7 @@ class ScoreController
 
     val scoreData = MutableLiveData<Int>()
 
-    private var score
+    var score
         get() = scoreData.value!!
         private set(value) {
             scoreData.value = value
@@ -22,6 +22,10 @@ class ScoreController
 
     fun addScore(amount: Int) {
         score += amount
+    }
+
+    fun setScoreFromMessage(score: Int) {
+        this.score = score
     }
 
 }

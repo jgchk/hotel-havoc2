@@ -19,7 +19,7 @@ class Oven
     companion object {
         private const val INCREMENT = 500L
         private const val TIMEOUT = 60 * 1000L
-        private val STEPS = listOf("open", "closed", "waitEvent")
+        private val STEPS = listOf("closed", "wait")
         private const val PROGRESS_INCREMENT = 10
         private val TAG = Oven::class.simpleName
     }
@@ -61,7 +61,7 @@ class Oven
         if (reading.status == STEPS[currentStep]) {
             Log.d(TAG, "Next step")
             currentStep++
-        } else if (STEPS[currentStep] == "waitEvent") {
+        } else if (STEPS[currentStep] == "wait") {
             addProgress(PROGRESS_INCREMENT)
         }
     }

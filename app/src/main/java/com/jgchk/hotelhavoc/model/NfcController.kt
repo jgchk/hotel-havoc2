@@ -10,7 +10,8 @@ class NfcController
     private val handController: HandController,
     private val actionParser: ActionParser,
     private val actionController: ActionController,
-    private val orderController: OrderController
+    private val orderController: OrderController,
+    private val roomController: RoomController
 ) {
 
     fun onNfcScan(tag: String) {
@@ -35,6 +36,8 @@ class NfcController
             }
             'r' -> {
                 if (orderController.turnIn(handController.hand, str.toInt())) {
+                    roomController.sendOrders()
+                    roomController.sendScore()
                     handController.trash()
                 }
             }

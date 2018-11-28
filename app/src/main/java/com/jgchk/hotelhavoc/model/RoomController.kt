@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jgchk.hotelhavoc.core.extension.Event
 import com.jgchk.hotelhavoc.model.orders.Order
+import com.jgchk.hotelhavoc.ui.game.Message
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,12 +18,15 @@ class RoomController
 @Inject constructor(
     private val orderController: OrderController,
     private val gson: Gson,
-    private val messageController: MessageController
+    private val messageController: MessageController,
+    private val scoreController: ScoreController
 ) {
 
     val joinEvent = MutableLiveData<Event<RoomConfig>>()
     val waitEvent = MutableLiveData<Event<Room>>()
     val leaveEvent = MutableLiveData<Event<RoomData>>()
+    val startEvent = MutableLiveData<Event<Boolean>>()
+
     var room: Room? = null
         private set
     var participantId: String? = null
@@ -106,6 +110,10 @@ class RoomController
         waitEvent.value = Event(room!!)
     }
 
+    fun start() {
+        startEvent.value = Event(true)
+    }
+
     val roomUpdateCallback = object : RoomUpdateCallback() {
         override fun onJoinedRoom(code: Int, room: Room?) {
             if (code == GamesCallbackStatusCodes.OK && room != null) {
@@ -133,6 +141,7 @@ class RoomController
             if (code == GamesCallbackStatusCodes.OK && room != null) {
                 Log.d(TAG, "Room ${room.roomId} connected.")
                 this@RoomController.room = room
+                start()
             } else {
                 Log.w(TAG, "Error connecting to mRoom: $code")
             }
@@ -156,6 +165,8 @@ class RoomController
             }
         } else if (parts[0] == "orders") {
             orderController.setOrdersFromMessage(processOrdersString(parts[1]))
+        } else if (parts[0] == "score") {
+            scoreController.setScoreFromMessage(parts[1].toInt())
         }
     }
 
@@ -180,14 +191,40 @@ class RoomController
             if (participantId == hostId) {
                 hostOrders()
             } else {
-                messageController.sendMessage("host | $hostId")
+                messageController.sendMessage(
+                    Message(
+                        "host | $hostId",
+                        room!!,
+                        participantId!!
+                    )
+                )
             }
         }
     }
 
     fun hostOrders() {
-        val orders = orderController.initOrders()
-        messageController.sendMessage("orders | ${makeOrdersString(orders)}")
+        orderController.initOrders()
+        sendOrders()
+    }
+
+    fun sendOrders() {
+        messageController.sendMessage(
+            Message(
+                "orders | ${makeOrdersString(orderController.orders)}",
+                room!!,
+                participantId!!
+            )
+        )
+    }
+
+    fun sendScore() {
+        messageController.sendMessage(
+            Message(
+                "score | ${scoreController.score}",
+                room!!,
+                participantId!!
+            )
+        )
     }
 
     val roomConfig: RoomConfig = RoomConfig.builder(roomUpdateCallback)

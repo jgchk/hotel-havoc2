@@ -18,9 +18,9 @@ class OrderController
 
     val ordersData = MutableLiveData<List<Order>>()
 
-    private var orders
+    var orders
         get() = ordersData.value!!
-        set(value) {
+        private set(value) {
             ordersData.value = value
         }
 

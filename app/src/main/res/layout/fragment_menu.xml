@@ -37,15 +37,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/hhslogan" />
 
-    <!--<pl.droidsonroids.gif.GifImageView-->
-        <!--android:id="@+id/logo_kitty"-->
-        <!--android:layout_width="138dp"-->
-        <!--android:layout_height="114dp"-->
-        <!--android:layout_marginStart="228dp"-->
-        <!--android:layout_marginTop="88dp"-->
-        <!--android:src="@drawable/chefkitty"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/logo_kitty"
+        android:layout_width="138dp"
+        android:layout_height="114dp"
+        android:layout_marginStart="228dp"
+        android:layout_marginTop="88dp"
+        android:src="@drawable/chefkitty"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--<pl.droidsonroids.gif.GifImageView-->
     <!--android:layout_width="138dp"-->

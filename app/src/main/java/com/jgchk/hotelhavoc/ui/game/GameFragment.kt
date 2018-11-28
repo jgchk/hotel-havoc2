@@ -49,11 +49,13 @@ class GameFragment : BaseFragment() {
             observe(leave, ::onLeaveEvent)
             observe(join, ::onJoinEvent)
             observe(wait, ::onWaitEvent)
+            observe(start, ::onStartEvent)
+            observe(messages, ::onSendMessage)
         }
 
-//        multiplayerClient =
-//                Games.getRealTimeMultiplayerClient(context!!, GoogleSignIn.getLastSignedInAccount(context)!!)
-//        gameViewModel.createRoom()
+        multiplayerClient =
+                Games.getRealTimeMultiplayerClient(context!!, GoogleSignIn.getLastSignedInAccount(context)!!)
+        gameViewModel.createRoom()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -160,11 +162,46 @@ class GameFragment : BaseFragment() {
             .addOnSuccessListener { startActivityForResult(it, RC_WAITING_ROOM) }
     }
 
+    private fun onStartEvent(event: Event<Boolean>?) {
+        event?.getContentIfNotHandled()?.let {
+            getParticipantId()
+        }
+    }
+
     fun getParticipantId() {
         Games.getPlayersClient(context!!, GoogleSignIn.getLastSignedInAccount(context)!!)
             .currentPlayerId
             .addOnSuccessListener { gameViewModel.setParticipantId(it) }
             .addOnFailureListener { Log.e(TAG, "Failed to get participant id") }
+    }
+
+    fun onSendMessage(event: Event<Message>?) {
+        event?.getContentIfNotHandled()?.let {
+            Log.d(TAG, "Send: ${it.message}")
+            sendToAllReliably(it.message.toByteArray(), it.room, it.myParticipantId)
+        }
+    }
+
+    private val pendingMessages = mutableSetOf<Int>()
+
+    private fun sendToAllReliably(message: ByteArray, room: Room, myParticipantId: String) {
+        room.participantIds.forEach {
+            if (it != myParticipantId) {
+                sendMessage(message, room, it)
+            }
+        }
+    }
+
+    private fun sendMessage(message: ByteArray, room: Room, participantId: String) {
+        multiplayerClient.sendReliableMessage(
+            message,
+            room.roomId,
+            participantId
+        ) { _, tokenId, _ ->
+            pendingMessages.remove(tokenId)
+        }.addOnCompleteListener {
+            pendingMessages.add(it.result!!)
+        }
     }
 
     fun onNfcScan(tag: String) {

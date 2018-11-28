@@ -6,6 +6,7 @@ import com.jgchk.hotelhavoc.model.ingredients.milkshake.MilkshakeIngredient
 
 class Milkshake private constructor() : Order() {
 
+    override val name = "milkshake"
     override val requiredIngredients = listOf(
         MilkshakeIngredient(true)
     )

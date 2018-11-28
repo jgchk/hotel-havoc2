@@ -9,6 +9,7 @@ import kotlin.random.Random
 
 class Hamburger private constructor(override val score: Int, vararg required: Ingredient) : Order() {
 
+    override val name = "hamburger"
     override val requiredIngredients = required.toList()
 
     companion object : HasRandomGenerator {

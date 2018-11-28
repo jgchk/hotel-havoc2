@@ -5,6 +5,7 @@ import com.jgchk.hotelhavoc.model.ingredients.fries.Potato
 
 class Fries private constructor() : Order() {
 
+    override val name = "fries"
     override val requiredIngredients = listOf(
         FriesIngredient(true)
     )
